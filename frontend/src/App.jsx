@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
-    const [data, setData] = useState("");
+    const [health, setHealth] = useState("Loading...");
 
     useEffect(() => {
         fetch("http://localhost:3000/api/health")
-            .then(res => res.json())
-            .then(data => setData(data.message))
-            .catch(() => setData("Backend niet bereikbaar"));
+            .then((res) => res.json())
+            .then((data) => setHealth(`${data.message} | DB: ${data.database}`))
+            .catch(() => setHealth("Could not connect to backend"));
     }, []);
 
     return (
-        <div>
-            <h1>YoRoomie</h1>
-            <p>{data}</p>
+        <div className="app">
+            <div className="card">
+                <h1>YoRoomie</h1>
+                <p>Starter setup is actief.</p>
+                <p>{health}</p>
+            </div>
         </div>
     );
 }
