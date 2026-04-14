@@ -5,7 +5,7 @@ function App() {
     const [health, setHealth] = useState("Loading...");
 
     useEffect(() => {
-        fetch("http://localhost:3000/api/health")
+        fetch("http://localhost:3001/api/health")
             .then((res) => res.json())
             .then((data) => setHealth(`${data.message} | DB: ${data.database}`))
             .catch(() => setHealth("Could not connect to backend"));

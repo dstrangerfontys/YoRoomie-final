@@ -10,9 +10,10 @@ router.get("/", async (req, res) => {
             database: rows[0].ok === 1 ? "connected" : "not connected",
         });
     } catch (error) {
+        console.error("DB health error:", error);
         res.status(500).json({
             message: "API is running but database failed",
-            error: error.message,
+            error: String(error),
         });
     }
 });
