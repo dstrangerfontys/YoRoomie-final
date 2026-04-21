@@ -490,3 +490,77 @@ button {
         border-radius: 0;
     }
 }
+.styled-select {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: #fffdfb;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+}
+
+.expense-item-card {
+    background: var(--surface);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+    .expense-item-card p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+.expense-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.expense-amount {
+    background: #fff0e4;
+    color: var(--primary-dark);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.real-task-card {
+    background: var(--surface);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+    .real-task-card p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+.task-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.accent-soft {
+    background: linear-gradient(180deg, #fff7ef 0%, #ffeede 100%);
+}
+
+.accent-light {
+    background: linear-gradient(180deg, #fffdfb 0%, #fff5ec 100%);
+}

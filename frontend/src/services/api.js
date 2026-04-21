@@ -52,3 +52,45 @@ export async function getUserHouseholds(userId) {
     const response = await fetch(`${API_BASE_URL}/households/${userId}`);
     return response.json();
 }
+
+export async function createExpense(payload) {
+    const response = await fetch(`${API_BASE_URL}/expenses`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    });
+
+    return response.json();
+}
+
+export async function getExpensesByHousehold(householdId) {
+    const response = await fetch(`${API_BASE_URL}/expenses/${householdId}`);
+    return response.json();
+}
+
+export async function createTask(payload) {
+    const response = await fetch(`${API_BASE_URL}/tasks`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    });
+
+    return response.json();
+}
+
+export async function getTasksByHousehold(householdId) {
+    const response = await fetch(`${API_BASE_URL}/tasks/${householdId}`);
+    return response.json();
+}
+
+export async function completeTask(taskId) {
+    const response = await fetch(`${API_BASE_URL}/tasks/${taskId}/complete`, {
+        method: "PATCH",
+    });
+
+    return response.json();
+}

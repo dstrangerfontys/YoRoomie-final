@@ -5,6 +5,7 @@ import DashboardPage from "./pages/DashboardPage";
 import HouseholdPage from "./pages/HouseholdPage";
 import TasksPage from "./pages/TasksPage";
 import GroceriesPage from "./pages/GroceriesPage";
+import ExpensesPage from "./pages/ExpensesPage";
 import "./App.css";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
                 <Route path="/households" element={<HouseholdPage />} />
                 <Route path="/tasks" element={<TasksPage />} />
                 <Route path="/groceries" element={<GroceriesPage />} />
+                <Route path="/expenses" element={<ExpensesPage />} />
             </Routes>
         </BrowserRouter>
     );
