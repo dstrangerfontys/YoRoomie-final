@@ -1,24 +1,24 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
+import HouseholdPage from "./pages/HouseholdPage";
+import TasksPage from "./pages/TasksPage";
+import GroceriesPage from "./pages/GroceriesPage";
 import "./App.css";
 
 function App() {
-    const [health, setHealth] = useState("Loading...");
-
-    useEffect(() => {
-        fetch("http://localhost:3001/api/health")
-            .then((res) => res.json())
-            .then((data) => setHealth(`${data.message} | DB: ${data.database}`))
-            .catch(() => setHealth("Could not connect to backend"));
-    }, []);
-
     return (
-        <div className="app">
-            <div className="card">
-                <h1>YoRoomie</h1>
-                <p>Starter setup is actief.</p>
-                <p>{health}</p>
-            </div>
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/households" element={<HouseholdPage />} />
+                <Route path="/tasks" element={<TasksPage />} />
+                <Route path="/groceries" element={<GroceriesPage />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 

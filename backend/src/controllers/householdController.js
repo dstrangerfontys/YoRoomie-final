@@ -121,4 +121,5 @@ async function joinHousehold(req, res) {
 module.exports = {
     createHousehold,
     getUserHouseholds,
+    joinHousehold,
 };
