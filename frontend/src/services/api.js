@@ -124,3 +124,24 @@ export async function getBalancesByHousehold(householdId) {
     const response = await fetch(`${API_BASE_URL}/expenses/${householdId}/balances`);
     return response.json();
 }
+
+export async function settleParticipant(participantId) {
+    const response = await fetch(
+        `${API_BASE_URL}/expenses/participants/${participantId}/settle`,
+        {
+            method: "PATCH",
+        }
+    );
+
+    return response.json();
+}
+
+export async function getExpenseParticipants(expenseId) {
+    const response = await fetch(`${API_BASE_URL}/expenses/${expenseId}/participants`);
+    return response.json();
+}
+
+export async function getSettlementsByHousehold(householdId) {
+    const response = await fetch(`${API_BASE_URL}/expenses/${householdId}/settlements`);
+    return response.json();
+}
