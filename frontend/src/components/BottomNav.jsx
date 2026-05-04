@@ -8,6 +8,7 @@ function BottomNav() {
         { to: "/households", label: "Huis" },
         { to: "/expenses", label: "Kosten" },
         { to: "/tasks", label: "Taken" },
+        { to: "/groceries", label: "Lijst" },
     ];
 
     return (

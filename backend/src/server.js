@@ -6,6 +6,7 @@ const authRoutes = require("./routes/authRoutes");
 const householdRoutes = require("./routes/householdRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const taskRoutes = require("./routes/taskRoutes");
+const groceryRoutes = require("./routes/groceryRoutes");
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/households", householdRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/groceries", groceryRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

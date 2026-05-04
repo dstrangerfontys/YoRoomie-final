@@ -84,7 +84,62 @@ async function getExpensesByHousehold(req, res) {
     }
 }
 
+async function getBalancesByHousehold(req, res) {
+    try {
+        const { householdId } = req.params;
+
+        const [rows] = await pool.query(
+            `
+      SELECT
+        u.id AS userId,
+        u.name,
+
+        COALESCE((
+          SELECT SUM(e.amount)
+          FROM expenses e
+          WHERE e.household_id = ?
+          AND e.paid_by_user_id = u.id
+        ), 0) AS paidTotal,
+
+        COALESCE((
+          SELECT SUM(ep.share_amount)
+          FROM expense_participants ep
+          INNER JOIN expenses e ON e.id = ep.expense_id
+          WHERE e.household_id = ?
+          AND ep.user_id = u.id
+        ), 0) AS owesTotal
+
+      FROM users u
+      INNER JOIN household_members hm ON hm.user_id = u.id
+      WHERE hm.household_id = ?
+      `,
+            [householdId, householdId, householdId]
+        );
+
+        const balances = rows.map((row) => {
+            const paidTotal = Number(row.paidTotal);
+            const owesTotal = Number(row.owesTotal);
+
+            return {
+                userId: row.userId,
+                name: row.name,
+                paidTotal,
+                owesTotal,
+                balance: Number((paidTotal - owesTotal).toFixed(2)),
+            };
+        });
+
+        res.json(balances);
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to fetch balances",
+            error: error.message,
+        });
+    }
+}
+
 module.exports = {
     createExpense,
     getExpensesByHousehold,
+    getBalancesByHousehold,
 };

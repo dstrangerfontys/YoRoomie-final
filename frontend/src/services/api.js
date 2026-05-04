@@ -94,3 +94,33 @@ export async function completeTask(taskId) {
 
     return response.json();
 }
+
+export async function createGrocery(payload) {
+    const response = await fetch(`${API_BASE_URL}/groceries`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    });
+
+    return response.json();
+}
+
+export async function getGroceriesByHousehold(householdId) {
+    const response = await fetch(`${API_BASE_URL}/groceries/${householdId}`);
+    return response.json();
+}
+
+export async function completeGrocery(itemId) {
+    const response = await fetch(`${API_BASE_URL}/groceries/${itemId}/complete`, {
+        method: "PATCH",
+    });
+
+    return response.json();
+}
+
+export async function getBalancesByHousehold(householdId) {
+    const response = await fetch(`${API_BASE_URL}/expenses/${householdId}/balances`);
+    return response.json();
+}

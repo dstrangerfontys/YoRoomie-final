@@ -59,3 +59,15 @@ CREATE TABLE IF NOT EXISTS tasks (
     FOREIGN KEY (household_id) REFERENCES households(id) ON DELETE CASCADE,
     FOREIGN KEY (assigned_to_user_id) REFERENCES users(id) ON DELETE SET NULL
 );
+
+CREATE TABLE IF NOT EXISTS groceries (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    household_id INT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    quantity VARCHAR(100) NULL,
+    added_by_user_id INT NOT NULL,
+    status ENUM('open', 'done') DEFAULT 'open',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (household_id) REFERENCES households(id) ON DELETE CASCADE,
+    FOREIGN KEY (added_by_user_id) REFERENCES users(id) ON DELETE CASCADE
+);
