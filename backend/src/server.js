@@ -27,6 +27,6 @@ app.use("/api/expenses", expenseRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/groceries", groceryRoutes);
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
 });
