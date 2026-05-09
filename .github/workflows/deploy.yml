@@ -27,18 +27,18 @@ jobs:
 
       - name: Build backend image
         run: |
-          docker build -t yoroomieacr.azurecr.io/yoroomie-api:${{ github.sha }} ./backend
+          docker build -t yoroomieacr-ffbkg9cbc5cdb3ca.azurecr.io/yoroomie-api:${{ github.sha }} ./backend
 
       - name: Push backend image
         run: |
-          docker push yoroomieacr.azurecr.io/yoroomie-api:${{ github.sha }}
+          docker push yoroomieacr-ffbkg9cbc5cdb3ca.azurecr.io/yoroomie-api:${{ github.sha }}
 
       - name: Deploy backend to Container App
         run: |
           az containerapp update \
             --name yoroomie-prod-api \
             --resource-group yoroomie-prod-rg \
-            --image yoroomieacr.azurecr.io/yoroomie-api:${{ github.sha }}
+            --image yoroomieacr-ffbkg9cbc5cdb3ca.azurecr.io/yoroomie-api:${{ github.sha }}
 
   frontend:
     name: Build & Deploy Frontend
@@ -59,15 +59,15 @@ jobs:
 
       - name: Build frontend image
         run: |
-          docker build -t yoroomieacr.azurecr.io/yoroomie-fe:${{ github.sha }} ./frontend
+          docker build -t yoroomieacr-ffbkg9cbc5cdb3ca.azurecr.io/yoroomie-fe:${{ github.sha }} ./frontend
 
       - name: Push frontend image
         run: |
-          docker push yoroomieacr.azurecr.io/yoroomie-fe:${{ github.sha }}
+          docker push yoroomieacr-ffbkg9cbc5cdb3ca.azurecr.io/yoroomie-fe:${{ github.sha }}
 
       - name: Deploy frontend to Container App
         run: |
           az containerapp update \
             --name yoroomie-prod-fe \
             --resource-group yoroomie-prod-rg \
-            --image yoroomieacr.azurecr.io/yoroomie-fe:${{ github.sha }}
+            --image yoroomieacr-ffbkg9cbc5cdb3ca.azurecr.io/yoroomie-fe:${{ github.sha }}
