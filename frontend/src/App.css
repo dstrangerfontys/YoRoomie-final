@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
 :root {
     --bg: #f6ede7;
     --surface: #fff8f3;
@@ -19,7 +21,7 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Albert Sans, sans-serif;
     background: linear-gradient(180deg, #f8f1ec 0%, #f4e8df 100%);
     color: var(--text);
 }
@@ -422,7 +424,7 @@ button {
 }
 
 .auth-subtext {
-    margin: 0;
+    margin: 0 auto;
     max-width: 280px;
     line-height: 1.45;
     opacity: 0.95;
