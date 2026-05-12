@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: yoroomie-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: yoroomie_db
+      POSTGRES_USER: yoroomie_user
+      POSTGRES_PASSWORD: yoroomie_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./backend
+    container_name: yoroomie-backend
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: yoroomie_db
+      DB_USER: yoroomie_user
+      DB_PASSWORD: yoroomie_password
+      DB_SSL: false
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build: ./frontend
+    container_name: yoroomie-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
