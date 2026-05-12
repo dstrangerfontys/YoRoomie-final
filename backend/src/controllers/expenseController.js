@@ -10,28 +10,37 @@ async function createExpense(req, res) {
             });
         }
 
-        const [members] = await pool.query(
-            "SELECT user_id FROM household_members WHERE household_id = ?",
+        const membersResult = await pool.query(
+            "SELECT user_id FROM household_members WHERE household_id = $1",
             [householdId]
         );
 
+        const members = membersResult.rows;
+
         if (members.length === 0) {
-            return res.status(404).json({ message: "No members found for this household" });
+            return res.status(404).json({
+                message: "No members found for this household"
+            });
         }
 
         const numericAmount = Number(amount);
         const shareAmount = Number((numericAmount / members.length).toFixed(2));
 
-        const [expenseResult] = await pool.query(
-            "INSERT INTO expenses (household_id, title, amount, paid_by_user_id) VALUES (?, ?, ?, ?)",
+        const expenseResult = await pool.query(
+            `INSERT INTO expenses 
+            (household_id, title, amount, paid_by_user_id)
+            VALUES ($1, $2, $3, $4)
+            RETURNING id`,
             [householdId, title, numericAmount, paidByUserId]
         );
 
-        const expenseId = expenseResult.insertId;
+        const expenseId = expenseResult.rows[0].id;
 
         for (const member of members) {
             await pool.query(
-                "INSERT INTO expense_participants (expense_id, user_id, share_amount, is_settled) VALUES (?, ?, ?, ?)",
+                `INSERT INTO expense_participants 
+                (expense_id, user_id, share_amount, is_settled)
+                VALUES ($1, $2, $3, $4)`,
                 [expenseId, member.user_id, shareAmount, false]
             );
         }
@@ -60,22 +69,22 @@ async function getExpensesByHousehold(req, res) {
     try {
         const { householdId } = req.params;
 
-        const [rows] = await pool.query(
+        const result = await pool.query(
             `SELECT 
-         e.id,
-         e.title,
-         e.amount,
-         e.paid_by_user_id,
-         e.created_at,
-         u.name AS paid_by_name
-       FROM expenses e
-       INNER JOIN users u ON u.id = e.paid_by_user_id
-       WHERE e.household_id = ?
-       ORDER BY e.created_at DESC`,
+                e.id,
+                e.title,
+                e.amount,
+                e.paid_by_user_id,
+                e.created_at,
+                u.name AS paid_by_name
+            FROM expenses e
+            INNER JOIN users u ON u.id = e.paid_by_user_id
+            WHERE e.household_id = $1
+            ORDER BY e.created_at DESC`,
             [householdId]
         );
 
-        res.json(rows);
+        res.json(result.rows);
     } catch (error) {
         res.status(500).json({
             message: "Failed to fetch expenses",
@@ -88,35 +97,35 @@ async function getBalancesByHousehold(req, res) {
     try {
         const { householdId } = req.params;
 
-        const [rows] = await pool.query(
+        const result = await pool.query(
             `
-      SELECT
-        u.id AS userId,
-        u.name,
+            SELECT
+                u.id AS "userId",
+                u.name,
 
-        COALESCE((
-          SELECT SUM(e.amount)
-          FROM expenses e
-          WHERE e.household_id = ?
-          AND e.paid_by_user_id = u.id
-        ), 0) AS paidTotal,
+                COALESCE((
+                    SELECT SUM(e.amount)
+                    FROM expenses e
+                    WHERE e.household_id = $1
+                    AND e.paid_by_user_id = u.id
+                ), 0) AS "paidTotal",
 
-        COALESCE((
-          SELECT SUM(ep.share_amount)
-          FROM expense_participants ep
-          INNER JOIN expenses e ON e.id = ep.expense_id
-          WHERE e.household_id = ?
-          AND ep.user_id = u.id
-        ), 0) AS owesTotal
+                COALESCE((
+                    SELECT SUM(ep.share_amount)
+                    FROM expense_participants ep
+                    INNER JOIN expenses e ON e.id = ep.expense_id
+                    WHERE e.household_id = $2
+                    AND ep.user_id = u.id
+                ), 0) AS "owesTotal"
 
-      FROM users u
-      INNER JOIN household_members hm ON hm.user_id = u.id
-      WHERE hm.household_id = ?
-      `,
+            FROM users u
+            INNER JOIN household_members hm ON hm.user_id = u.id
+            WHERE hm.household_id = $3
+            `,
             [householdId, householdId, householdId]
         );
 
-        const balances = rows.map((row) => {
+        const balances = result.rows.map((row) => {
             const paidTotal = Number(row.paidTotal);
             const owesTotal = Number(row.owesTotal);
 
@@ -142,22 +151,22 @@ async function getExpenseParticipants(req, res) {
     try {
         const { expenseId } = req.params;
 
-        const [rows] = await pool.query(
+        const result = await pool.query(
             `SELECT
-         ep.id,
-         ep.expense_id,
-         ep.user_id,
-         u.name,
-         ep.share_amount,
-         ep.is_settled
-       FROM expense_participants ep
-       INNER JOIN users u ON u.id = ep.user_id
-       WHERE ep.expense_id = ?
-       ORDER BY u.name ASC`,
+                ep.id,
+                ep.expense_id,
+                ep.user_id,
+                u.name,
+                ep.share_amount,
+                ep.is_settled
+            FROM expense_participants ep
+            INNER JOIN users u ON u.id = ep.user_id
+            WHERE ep.expense_id = $1
+            ORDER BY u.name ASC`,
             [expenseId]
         );
 
-        res.json(rows);
+        res.json(result.rows);
     } catch (error) {
         res.status(500).json({
             message: "Failed to fetch expense participants",
@@ -170,16 +179,20 @@ async function settleParticipant(req, res) {
     try {
         const { participantId } = req.params;
 
-        const [result] = await pool.query(
-            "UPDATE expense_participants SET is_settled = 1 WHERE id = ?",
+        const result = await pool.query(
+            "UPDATE expense_participants SET is_settled = true WHERE id = $1",
             [participantId]
         );
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: "Participant not found" });
+        if (result.rowCount === 0) {
+            return res.status(404).json({
+                message: "Participant not found"
+            });
         }
 
-        res.json({ message: "Participant marked as settled" });
+        res.json({
+            message: "Participant marked as settled"
+        });
     } catch (error) {
         res.status(500).json({
             message: "Failed to settle participant",
@@ -192,35 +205,35 @@ async function getSettlementsByHousehold(req, res) {
     try {
         const { householdId } = req.params;
 
-        const [rows] = await pool.query(
+        const result = await pool.query(
             `
-      SELECT
-        u.id AS userId,
-        u.name,
+            SELECT
+                u.id AS "userId",
+                u.name,
 
-        COALESCE((
-          SELECT SUM(e.amount)
-          FROM expenses e
-          WHERE e.household_id = ?
-          AND e.paid_by_user_id = u.id
-        ), 0) AS paidTotal,
+                COALESCE((
+                    SELECT SUM(e.amount)
+                    FROM expenses e
+                    WHERE e.household_id = $1
+                    AND e.paid_by_user_id = u.id
+                ), 0) AS "paidTotal",
 
-        COALESCE((
-          SELECT SUM(ep.share_amount)
-          FROM expense_participants ep
-          INNER JOIN expenses e ON e.id = ep.expense_id
-          WHERE e.household_id = ?
-          AND ep.user_id = u.id
-        ), 0) AS owesTotal
+                COALESCE((
+                    SELECT SUM(ep.share_amount)
+                    FROM expense_participants ep
+                    INNER JOIN expenses e ON e.id = ep.expense_id
+                    WHERE e.household_id = $2
+                    AND ep.user_id = u.id
+                ), 0) AS "owesTotal"
 
-      FROM users u
-      INNER JOIN household_members hm ON hm.user_id = u.id
-      WHERE hm.household_id = ?
-      `,
+            FROM users u
+            INNER JOIN household_members hm ON hm.user_id = u.id
+            WHERE hm.household_id = $3
+            `,
             [householdId, householdId, householdId]
         );
 
-        const balances = rows.map((row) => {
+        const balances = result.rows.map((row) => {
             const paidTotal = Number(row.paidTotal);
             const owesTotal = Number(row.owesTotal);
 
