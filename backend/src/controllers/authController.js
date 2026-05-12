@@ -7,27 +7,33 @@ async function register(req, res) {
         const { name, email, password } = req.body;
 
         if (!name || !email || !password) {
-            return res.status(400).json({ message: "Voer je naam, e-mailadres en gewenste wachtwoord in." });
+            return res.status(400).json({
+                message: "Voer je naam, e-mailadres en gewenste wachtwoord in."
+            });
         }
 
-        const [existingUsers] = await pool.query(
-            "SELECT id FROM users WHERE email = ?",
+        const existingUsersResult = await pool.query(
+            "SELECT id FROM users WHERE email = $1",
             [email]
         );
 
+        const existingUsers = existingUsersResult.rows;
+
         if (existingUsers.length > 0) {
-            return res.status(409).json({ message: "Het ingevoerde e-mailadres is reeds in gebruik." });
+            return res.status(409).json({
+                message: "Het ingevoerde e-mailadres is reeds in gebruik."
+            });
         }
 
         const passwordHash = await bcrypt.hash(password, 10);
 
-        const [result] = await pool.query(
-            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+        const result = await pool.query(
+            "INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id",
             [name, email, passwordHash]
         );
 
         const user = {
-            id: result.insertId,
+            id: result.rows[0].id,
             name,
             email,
         };
@@ -37,6 +43,7 @@ async function register(req, res) {
             user,
             token: generateToken(user),
         });
+
     } catch (error) {
         res.status(500).json({
             message: "Registration failed",
@@ -49,21 +56,30 @@ async function login(req, res) {
     try {
         const { email, password } = req.body;
 
-        const [users] = await pool.query(
-            "SELECT * FROM users WHERE email = ?",
+        const result = await pool.query(
+            "SELECT * FROM users WHERE email = $1",
             [email]
         );
 
+        const users = result.rows;
+
         if (users.length === 0) {
-            return res.status(401).json({ message: "Controleer je e-mailadres en wachtwoord." });
+            return res.status(401).json({
+                message: "Controleer je e-mailadres en wachtwoord."
+            });
         }
 
         const user = users[0];
 
-        const passwordMatches = await bcrypt.compare(password, user.password_hash);
+        const passwordMatches = await bcrypt.compare(
+            password,
+            user.password_hash
+        );
 
         if (!passwordMatches) {
-            return res.status(401).json({ message: "Controleer je e-mailadres en wachtwoord." });
+            return res.status(401).json({
+                message: "Controleer je e-mailadres en wachtwoord."
+            });
         }
 
         res.json({
@@ -75,6 +91,7 @@ async function login(req, res) {
             },
             token: generateToken(user),
         });
+
     } catch (error) {
         res.status(500).json({
             message: "Login failed",
