@@ -26,6 +26,7 @@ services:
       DB_NAME: yoroomie_db
       DB_USER: yoroomie_user
       DB_PASSWORD: yoroomie_password
+      DB_SSL: "false"
     depends_on:
       - postgres
     volumes:
