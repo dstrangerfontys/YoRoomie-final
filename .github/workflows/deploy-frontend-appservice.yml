@@ -35,6 +35,6 @@ jobs:
       - name: Deploy frontend to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
-          app-name: yoroomie-frontend
+          app-name: yoroomie
           publish-profile: ${{ secrets.AZURE_FRONTEND_PUBLISH_PROFILE }}
           package: ./frontend/dist
