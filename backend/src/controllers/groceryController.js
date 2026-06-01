@@ -86,6 +86,35 @@ async function completeGrocery(req, res) {
     }
 }
 
+async function updateGrocery(req, res) {
+    try {
+        const { itemId } = req.params;
+        const { title, quantity } = req.body;
+
+        if (!title) {
+            return res.status(400).json({ message: "Title is required" });
+        }
+
+        const [result] = await pool.query(
+            `UPDATE groceries
+       SET title = ?, quantity = ?
+       WHERE id = ?`,
+            [title, quantity || null, itemId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Grocery item not found" });
+        }
+
+        res.json({ message: "Grocery item updated successfully" });
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to update grocery item",
+            error: error.message,
+        });
+    }
+}
+
 async function deleteGrocery(req, res) {
     try {
         const { itemId } = req.params;
@@ -113,4 +142,5 @@ module.exports = {
     getGroceriesByHousehold,
     completeGrocery,
     deleteGrocery,
+    updateGrocery,
 };

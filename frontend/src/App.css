@@ -1324,3 +1324,18 @@ article.form-card h3 {
         .logout-button:hover {
             transform: translateY(-1px);
         }
+
+    .inline-edit-card {
+        background: #fff8f3;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .edit-actions {
+        display: flex;
+        gap: 8px;
+    }

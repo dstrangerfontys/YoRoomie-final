@@ -132,6 +132,35 @@ async function completeTask(req, res) {
     }
 }
 
+async function updateTask(req, res) {
+    try {
+        const { taskId } = req.params;
+        const { title, description, dueDate } = req.body;
+
+        if (!title) {
+            return res.status(400).json({ message: "Title is required" });
+        }
+
+        const [result] = await pool.query(
+            `UPDATE tasks
+       SET title = ?, description = ?, due_date = ?
+       WHERE id = ?`,
+            [title, description || null, dueDate || null, taskId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+
+        res.json({ message: "Task updated successfully" });
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to update task",
+            error: error.message,
+        });
+    }
+}
+
 async function deleteTask(req, res) {
     try {
         const { taskId } = req.params;
@@ -159,4 +188,5 @@ module.exports = {
     getTasksByHousehold,
     completeTask,
     deleteTask,
+    updateTask,
 };

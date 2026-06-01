@@ -12,6 +12,30 @@ export async function registerUser(payload) {
     return response.json();
 }
 
+export async function updateTask(taskId, payload) {
+    const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    });
+
+    return response.json();
+}
+
+export async function updateGrocery(itemId, payload) {
+    const response = await fetch(`${API_BASE_URL}/groceries/${itemId}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+    });
+
+    return response.json();
+}
+
 export async function loginUser(payload) {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",

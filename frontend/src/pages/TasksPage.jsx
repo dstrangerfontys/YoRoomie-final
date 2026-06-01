@@ -5,6 +5,7 @@ import {
     getTasksByHousehold,
     completeTask,
     deleteTask,
+    updateTask,
     getUserHouseholds,
 } from "../services/api";
 import Avatar from "../components/Avatar";
@@ -21,6 +22,10 @@ function TasksPage() {
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [message, setMessage] = useState("");
+    const [editingTaskId, setEditingTaskId] = useState(null);
+    const [editTitle, setEditTitle] = useState("");
+    const [editDescription, setEditDescription] = useState("");
+    const [editDueDate, setEditDueDate] = useState("");
 
     async function loadHouseholds() {
         if (!user?.id) return;
@@ -35,6 +40,32 @@ function TasksPage() {
         if (!householdId) return;
         const result = await getTasksByHousehold(householdId);
         setTasks(Array.isArray(result) ? result : []);
+    }
+
+    function startEditTask(task) {
+        setEditingTaskId(task.id);
+        setEditTitle(task.title);
+        setEditDescription(task.description || "");
+        setEditDueDate(task.due_date ? task.due_date.slice(0, 10) : "");
+    }
+
+    function cancelEditTask() {
+        setEditingTaskId(null);
+        setEditTitle("");
+        setEditDescription("");
+        setEditDueDate("");
+    }
+
+    async function handleUpdateTask(taskId) {
+        const result = await updateTask(taskId, {
+            title: editTitle,
+            description: editDescription,
+            dueDate: editDueDate,
+        });
+
+        setMessage(result.message || "");
+        cancelEditTask();
+        loadTasks(selectedHouseholdId);
     }
 
     useEffect(() => {
@@ -123,50 +154,97 @@ function TasksPage() {
                         </div>
                     ) : (
                         <div className="household-cards">
-                            {tasks.map((task) => (
-                                <article key={task.id} className="task-card real-task-card">
-                                    <div>
-                                        <strong>{task.title}</strong>
-                                        <p>{task.description || ""}</p>
+                                {tasks.map((task) => (
+                                    <div key={task.id} className="editable-list-item">
+                                        <article className="task-card real-task-card">
+                                            <div>
+                                                <strong>{task.title}</strong>
 
-                                        {task.due_date && (
-                                            <p>
-                                                <svg xmlns="http://www.w3.org/2000/svg" height="10" width="8.75" viewBox="0 0 448 512">
-                                                    <path fill="rgb(117, 66, 38)" d="M120 0c13.3 0 24 10.7 24 24l0 40 160 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 32 0c35.3 0 64 28.7 64 64l0 288c0 35.3-28.7 64-64 64L64 480c-35.3 0-64-28.7-64-64L0 128C0 92.7 28.7 64 64 64l32 0 0-40c0-13.3 10.7-24 24-24zm0 112l-56 0c-8.8 0-16 7.2-16 16l0 48 352 0 0-48c0-8.8-7.2-16-16-16l-264 0zM48 224l0 192c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-192-352 0z" />
-                                                </svg>{" "}
-                                                {task.due_date.slice(0, 10).split("-").reverse().join("-")}
-                                            </p>
+                                                {task.description && <p>{task.description}</p>}
+
+                                                {task.due_date && (
+                                                    <p>
+                                                        Deadline: {task.due_date.slice(0, 10).split("-").reverse().join("-")}
+                                                    </p>
+                                                )}
+
+                                                <div className="user-information">
+                                                    <Avatar size={30} src={task.assigned_to_avatar} />
+                                                    <span>{task.assigned_to_name || "Niet toegewezen"}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="task-actions">
+                                                <button
+                                                    className="mini-pill"
+                                                    onClick={() => startEditTask(task)}
+                                                >
+                                                    Edit
+                                                </button>
+
+                                                {task.status === "done" && (
+                                                    <span className="status-pill done">Done</span>
+                                                )}
+
+                                                {task.status !== "done" && (
+                                                    <button
+                                                        className="mini-pill"
+                                                        onClick={() => handleComplete(task.id)}
+                                                    >
+                                                        Afronden
+                                                    </button>
+                                                )}
+
+                                                <button
+                                                    className="delete-pill"
+                                                    onClick={() => handleDelete(task.id)}
+                                                >
+                                                    Verwijder
+                                                </button>
+                                            </div>
+                                        </article>
+
+                                        {editingTaskId === task.id && (
+                                            <div className="inline-edit-card">
+                                                <input
+                                                    type="text"
+                                                    value={editTitle}
+                                                    onChange={(e) => setEditTitle(e.target.value)}
+                                                    placeholder="Titel"
+                                                />
+
+                                                <input
+                                                    type="text"
+                                                    value={editDescription}
+                                                    onChange={(e) => setEditDescription(e.target.value)}
+                                                    placeholder="Beschrijving"
+                                                />
+
+                                                <input
+                                                    type="date"
+                                                    value={editDueDate}
+                                                    onChange={(e) => setEditDueDate(e.target.value)}
+                                                />
+
+                                                <div className="edit-actions">
+                                                    <button
+                                                        className="primary-button small"
+                                                        onClick={() => handleUpdateTask(task.id)}
+                                                    >
+                                                        Opslaan
+                                                    </button>
+
+                                                    <button
+                                                        className="delete-pill"
+                                                        onClick={cancelEditTask}
+                                                    >
+                                                        Annuleren
+                                                    </button>
+                                                </div>
+                                            </div>
                                         )}
-
-                                        <div className="user-information">
-                                            <Avatar size={30} src={task.assigned_to_avatar} />
-                                            <span>{task.assigned_to_name || "Niet toegewezen"}</span>
-                                        </div>
                                     </div>
-
-                                    <div className="task-actions">
-                                        {task.status === "done" && (
-                                            <span className="status-pill done">Done</span>
-                                        )}
-
-                                        <button
-                                            className="delete-pill"
-                                            onClick={() => handleDelete(task.id)}
-                                        >
-                                            Verwijder
-                                        </button>
-
-                                        {task.status !== "done" && (
-                                            <button
-                                                className="mini-pill"
-                                                onClick={() => handleComplete(task.id)}
-                                            >
-                                                Afronden
-                                            </button>
-                                        )}
-                                    </div>
-                                </article>
-                            ))}
+                                ))}
                         </div>
                     )}
                 </section>

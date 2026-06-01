@@ -5,6 +5,7 @@ import {
     getGroceriesByHousehold,
     completeGrocery,
     deleteGrocery,
+    updateGrocery,
     getUserHouseholds,
 } from "../services/api";
 
@@ -19,6 +20,9 @@ function GroceriesPage() {
     const [title, setTitle] = useState("");
     const [quantity, setQuantity] = useState("");
     const [message, setMessage] = useState("");
+    const [editingItemId, setEditingItemId] = useState(null);
+    const [editTitle, setEditTitle] = useState("");
+    const [editQuantity, setEditQuantity] = useState("");
 
     async function loadHouseholds() {
         if (!user?.id) return;
@@ -74,6 +78,29 @@ function GroceriesPage() {
         loadGroceries(selectedHouseholdId);
     }
 
+    function startEditItem(item) {
+        setEditingItemId(item.id);
+        setEditTitle(item.title);
+        setEditQuantity(item.quantity || "");
+    }
+
+    function cancelEditItem() {
+        setEditingItemId(null);
+        setEditTitle("");
+        setEditQuantity("");
+    }
+
+    async function handleUpdateItem(itemId) {
+        const result = await updateGrocery(itemId, {
+            title: editTitle,
+            quantity: editQuantity,
+        });
+
+        setMessage(result.message || "");
+        cancelEditItem();
+        loadGroceries(selectedHouseholdId);
+    }
+
     return (
             <MobileShell title="Boodschappenlijst" subtitle={<img src="../src/assets/logo-wit.png" alt="Logo" width="120" className="header-logo sub" />}>
 
@@ -115,39 +142,82 @@ function GroceriesPage() {
                         </div>
                     ) : (
                         <div className="household-cards">
-                            {groceries.map((item) => (
-                                <article key={item.id} className="grocery-card real-grocery-card">
-                                    <div>
-                                        <strong>{item.title}</strong>
-                                        <p>
-                                            {item.quantity || "Geen hoeveelheid"} toegevoegd door{" "}
-                                            {item.added_by_name || "onbekend"}
-                                        </p>
-                                    </div>
+                                {groceries.map((item) => (
+                                    <div key={item.id} className="editable-list-item">
+                                        <article className="grocery-card real-grocery-card">
+                                            <div>
+                                                <strong>{item.title}</strong>
+                                                <p>
+                                                    {item.quantity || "Geen hoeveelheid"} toegevoegd door{" "}
+                                                    {item.added_by_name || "onbekend"}
+                                                </p>
+                                            </div>
 
-                                    <div className="task-actions">
-                                        {item.status === "done" && (
-                                            <span className="status-pill done">Done</span>
+                                            <div className="task-actions">
+                                                <button
+                                                    className="mini-pill"
+                                                    onClick={() => startEditItem(item)}
+                                                >
+                                                    Edit
+                                                </button>
+
+                                                {item.status === "done" && (
+                                                    <span className="status-pill done">Done</span>
+                                                )}
+
+                                                {item.status !== "done" && (
+                                                    <button
+                                                        className="mini-pill"
+                                                        onClick={() => handleComplete(item.id)}
+                                                    >
+                                                        Afvinken
+                                                    </button>
+                                                )}
+
+                                                <button
+                                                    className="delete-pill"
+                                                    onClick={() => handleDelete(item.id)}
+                                                >
+                                                    Verwijder
+                                                </button>
+                                            </div>
+                                        </article>
+
+                                        {editingItemId === item.id && (
+                                            <div className="inline-edit-card">
+                                                <input
+                                                    type="text"
+                                                    value={editTitle}
+                                                    onChange={(e) => setEditTitle(e.target.value)}
+                                                    placeholder="Product"
+                                                />
+
+                                                <input
+                                                    type="text"
+                                                    value={editQuantity}
+                                                    onChange={(e) => setEditQuantity(e.target.value)}
+                                                    placeholder="Hoeveelheid"
+                                                />
+
+                                                <div className="edit-actions">
+                                                    <button
+                                                        className="primary-button small"
+                                                        onClick={() => handleUpdateItem(item.id)}
+                                                    >
+                                                        Opslaan
+                                                    </button>
+
+                                                    <button
+                                                        className="delete-pill"
+                                                        onClick={cancelEditItem}
+                                                    >
+                                                        Annuleren
+                                                    </button>
+                                                </div>
+                                            </div>
                                         )}
-
-                                        {item.status !== "done" && (
-                                            <button
-                                                className="mini-pill"
-                                                onClick={() => handleComplete(item.id)}
-                                            >
-                                                Afvinken
-                                            </button>
-                                        )}
-
-                                        <button
-                                            className="delete-pill"
-                                            onClick={() => handleDelete(item.id)}
-                                        >
-                                            Verwijder
-                                        </button>
                                     </div>
-                                </article>
-                            ))}
+                                ))}
                         </div>
                     )}
                 </section>
