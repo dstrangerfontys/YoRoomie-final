@@ -1,0 +1,45 @@
+name: Deploy YoRoomie Frontend App Service
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-frontend-appservice.yml'
+  workflow_dispatch:
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./frontend
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: ./frontend
+        env:
+          VITE_API_URL: https://yoroomie-backend.azurewebsites.net
+
+      - name: Zip frontend build
+        run: |
+          cd ./frontend/dist
+          zip -r ../frontend.zip .
+
+      - name: Deploy frontend to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: yoroomie
+          publish-profile: ${{ secrets.AZURE_FRONTEND_PUBLISH_PROFILE }}
+          package: ./frontend/frontend.zip
