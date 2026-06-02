@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3001/api";
+const API_BASE_URL = "https://yoroomie-backend-fsesd7a5g7dkamgd.swedencentral-01.azurewebsites.net/";
 
 export async function registerUser(payload) {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
