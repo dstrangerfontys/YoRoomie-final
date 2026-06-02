@@ -7,7 +7,8 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     allowedHosts: [
-      "yoroomie-dev-fe.proudocean-5e4432a6.italynorth.azurecontainerapps.io"
+        "yoroomie-dev-fe.proudocean-5e4432a6.italynorth.azurecontainerapps.io",
+        "yoroomie-backend-fsesd7a5g7dkamgd.swedencentral-01.azurewebsites.net"
     ]
   }
 })
