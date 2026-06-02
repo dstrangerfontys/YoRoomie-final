@@ -1,4 +1,13 @@
 const express = require("express");
+const corsOptions = {
+  origin: "https://yoroomie.azurewebsites.net",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 const cors = require("cors");
 const dotenv = require("dotenv");
 const healthRoutes = require("./routes/healthRoutes");
