@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://yoroomie-backend-fsesd7a5g7dkamgd.swedencentral-01.azurewebsites.net/api";
+const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 export async function registerUser(payload) {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -8,7 +8,7 @@ export async function registerUser(payload) {
         },
         body: JSON.stringify(payload),
     });
-
+ 
     return response.json();
 }
 
