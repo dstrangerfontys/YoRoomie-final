@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install frontend dependencies
         run: npm install
@@ -30,7 +30,7 @@ jobs:
         run: npm run build
         working-directory: ./frontend
         env:
-          VITE_API_URL: VITE_API_URL: https://yoroomie-backend.azurewebsites.net
+          VITE_API_URL: https://yoroomie-backend-fsesd7a5g7dkamgd.swedencentral-01.azurewebsites.net/api
 
       - name: Zip frontend build
         run: |
@@ -40,6 +40,6 @@ jobs:
       - name: Deploy frontend to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
-          app-name: yoroomie
+          app-name: 'yoroomie'
           publish-profile: ${{ secrets.AZURE_FRONTEND_PUBLISH_PROFILE }}
           package: ./frontend/frontend.zip
