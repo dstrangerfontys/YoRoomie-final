@@ -30,7 +30,7 @@ jobs:
         run: npm run build
         working-directory: ./frontend
         env:
-          VITE_API_URL: VITE_API_URL: https://yoroomie-backend-fsesd7a5g7dkamgd.swedencentral-01.azurewebsites.net/api
+          VITE_API_URL: VITE_API_URL: https://yoroomie-backend.azurewebsites.net
 
       - name: Zip frontend build
         run: |
