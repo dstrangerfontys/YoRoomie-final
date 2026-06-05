@@ -38,6 +38,18 @@ body {
     color: var(--text);
 }
 
+.status-desc {
+    margin-top: 10px !important;
+}
+
+.center {
+    text-align: center !important;
+}
+
+.avatar-fallback {
+    margin-right: 10px;
+}
+
 a {
     color: inherit;
 }

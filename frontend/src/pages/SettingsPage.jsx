@@ -116,7 +116,7 @@ function SettingsPage() {
     }
 
     return (
-        <MobileShell title="Instellingen" subtitle="Beheer je profiel en huishouden">
+        <MobileShell title="Instellingen" subtitle={<img src="../src/assets/logo-wit.png" alt="Logo" width="120" className="header-logo sub" />}>
             <section className="form-card">
                 <h3>Profielfoto</h3>
 
@@ -234,6 +234,20 @@ function SettingsPage() {
                         ))}
                     </div>
                 )}
+            </section>
+            <section className="form-card">
+                <h3>Support</h3>
+                <p>Loop je ergens tegenaan? Maak een ticket aan voor hulp.</p>
+
+                <a
+                    href="https://forms.office.com/Pages/ResponsePage.aspx?id=ZWdrxpS3K0qE7YRbNBwIakqjoEBmVWNDnEEJO5_3MeRUNUVRTU4xQ0ZWWTk2Q0U5VU9SOUhSUUJUSS4u"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="logout-button"
+                    style={{ display: "inline-block", textAlign: "center", textDecoration: "none", color: "#754226", background: "#75422617" }}
+                >
+                    Ticket aanmaken
+                </a>
             </section>
             <section className="form-card">
                 <h3>Account</h3>

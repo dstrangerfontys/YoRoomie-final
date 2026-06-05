@@ -106,12 +106,12 @@ function StatisticsPage() {
     }, [balances]);
 
     return (
-        <MobileShell title="Statistieken" subtitle="Inzicht in je huishouden">
+        <MobileShell title="Statistieken" subtitle={<img src="../src/assets/logo-wit.png" alt="Logo" width="120" className="header-logo sub" />}>
             <section className="hero-card">
                 <div>
                     <p className="eyebrow">Data-overzicht</p>
-                    <h2>Bekijk de status van je huishouden</h2>
-                    <p className="muted-text">
+                    <h2 className="center">De status van je huishouden</h2>
+                    <p className="muted-text status-desc">
                         Deze pagina toont taken, kosten, boodschappen en verrekeningen.
                     </p>
                 </div>

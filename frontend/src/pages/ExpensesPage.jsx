@@ -201,7 +201,7 @@ function ExpensesPage() {
 
                     {settlements.length === 0 ? (
                         <div className="empty-card">
-                            <p>Er zijn geen verrekeningen nodig. 🎉</p>
+                            <p>Er zijn nog geen kosten gemaakt, dus er zijn nog geen verrekeningen nodig.</p>
                         </div>
                     ) : (
                         <div className="household-cards">
