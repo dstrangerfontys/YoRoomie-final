@@ -19,7 +19,7 @@ const allowedOrigins = [
     "http://localhost:3000",
 
     // Brandon Frontend
-    "https://yoroomie-dev-fe.proudocean-5e4432a6.italynorth.azurecontainerapps.io",
+    "https://yoroomie-dev-fe.lemonsand-de32b260.swedencentral.azurecontainerapps.io",
 
     // Jesse Frontend
     "https://yoroomie.azurewebsites.net"

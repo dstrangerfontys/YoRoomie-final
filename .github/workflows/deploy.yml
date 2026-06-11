@@ -60,7 +60,7 @@ jobs:
       - name: Build frontend image
         run: |
           docker build \
-            --build-arg VITE_API_URL=https://yoroomie-dev-api.azurecontainerapps.io/api \
+            --build-arg VITE_API_URL=https://yoroomie-dev-api.lemonsand-de32b260.swedencentral.azurecontainerapps.io/api \
             -t yoroomieacr-ffbkg9cbc5cdb3ca.azurecr.io/yoroomie-fe:${{ github.sha }} \
             ./frontend
 
