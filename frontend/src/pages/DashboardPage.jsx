@@ -82,56 +82,6 @@ function DashboardPage() {
     return (
         <MobileShell title={<img src="../src/assets/logo-wit.png" alt="Logo" width="250" className="header-logo" />}>
 
-            <section className="dashboard-grid">
-                <article className="info-card accent-orange">
-                    <p className="card-label">Huishoudens</p>
-                    <h3>{households.length}</h3>
-                    <span className="card-note hidden">Actieve groepen</span>
-                </article>
-
-                <article className="info-card accent-cream">
-                    <p className="card-label">Open taken</p>
-                    <h3>{openTasksCount}</h3>
-                    <span className="card-note hidden">Nog af te ronden</span>
-                </article>
-
-                <article className="info-card accent-soft">
-                    <p className="card-label">Totale kosten</p>
-                    <h3>€ {totalExpenses.toFixed(2)}</h3>
-                    <span className="card-note hidden">Van geselecteerd huishouden</span>
-                </article>
-
-                <article className="info-card accent-light">
-                    <p className="card-label">Uitgaven</p>
-                    <h3>{expenses.length}</h3>
-                    <span className="card-note hidden">Geregistreerde kosten</span>
-                </article>
-            </section>
-
-            <section className="balance-card">
-                <div className="balance-title">
-                    <h3>Geldzaken</h3>
-                </div>
-                <div className="balance-amounts">
-                    <div className="balance-block">
-                        <p className="balance-label">Je ontvangt nog:</p>
-                        <p className="balance-amount">
-                            <span className="currency">&euro;</span> 30,60
-                        </p>
-                    </div>
-                    <div className="balance-block">
-                        <p className="balance-label">Je moet nog betalen:</p>
-                        <p className="balance-amount">
-                            <span className="currency">&euro;</span> 10,49
-                        </p>
-                    </div>
-                </div>
-
-                <button className="balance-button">
-                    Betaal openstaand bedrag
-                </button>
-            </section>
-
             <section className="list-section">
                 <div className="section-header">
                     <h3>Recente kosten</h3>
